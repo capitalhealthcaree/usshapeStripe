@@ -8,12 +8,6 @@ const Payment = require("./model/payment");
 
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(bodyParser.json());
-// Configure CORS to allow requests only from 'https://usshape.org'
-const corsOptions = {
-  origin: "https://usshape.org",
-};
-
-app.use(cors(corsOptions));
 
 // Database Connection
 mongoose.connect(
