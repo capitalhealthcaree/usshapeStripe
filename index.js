@@ -35,13 +35,12 @@ app.post("/payment", cors(), async (req, res) => {
     const payments = new Payment({
       payment: payment,
     });
+    await payments.save();
 
     res.json({
       message: "Payment successful",
       success: true,
     });
-
-    await payments.save();
   } catch (error) {
     console.log("Error", error);
     res.json({
