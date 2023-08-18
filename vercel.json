@@ -1,12 +1,4 @@
 {
   "builds": [{ "src": "index.js", "use": "@vercel/node" }],
-  "routes": [{ "src": "/(.*)", "dest": "/" }],
-  "headers": [
-    {
-      "source": "/payment",
-      "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "https://usshape.org" }
-      ]
-    }
-  ]
+  "routes": [{ "src": "/(.*)", "dest": "/" }]
 }
