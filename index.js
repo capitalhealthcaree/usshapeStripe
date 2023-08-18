@@ -32,16 +32,16 @@ app.post("/payment", cors(), async (req, res) => {
       currency: "USD",
       source: token.id,
     });
-
+    // Save the payment to the database
+    const payments = new Payment({
+      payment: payment,
+    });
+    
     res.json({
       message: "Payment successful",
       success: true,
     });
 
-    // Save the payment to the database
-    const payments = new Payment({
-      payment: payment,
-    });
     await payments.save();
   } catch (error) {
     console.log("Error", error);
