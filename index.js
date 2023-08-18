@@ -8,7 +8,12 @@ const Payment = require("./model/payment");
 
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(bodyParser.json());
-app.use(cors());
+// Configure CORS to allow requests only from 'https://usshape.org'
+const corsOptions = {
+  origin: "https://usshape.org",
+};
+
+app.use(cors(corsOptions));
 
 // Database Connection
 mongoose.connect(
@@ -36,7 +41,7 @@ app.post("/payment", cors(), async (req, res) => {
     const payments = new Payment({
       payment: payment,
     });
-    
+
     res.json({
       message: "Payment successful",
       success: true,
