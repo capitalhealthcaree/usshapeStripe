@@ -5,10 +5,7 @@
     {
       "source": "/payment",
       "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "https://usshape.org"
-        }
+        { "key": "Access-Control-Allow-Origin", "value": "https://usshape.org" }
       ]
     }
   ]
