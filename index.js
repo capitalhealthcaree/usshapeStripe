@@ -23,33 +23,37 @@ db.on("disconnected", (err, res) => {
 });
 
 //  ....................................End-Points...............................
-app.post("/payment", cors(), async (req, res) => {
-  let { amount, token } = req.body;
+app.post(
+  "/payment",
+  cors({ origin: "https://usshape.org" }),
+  async (req, res) => {
+    let { amount, token } = req.body;
 
-  try {
-    const payment = await stripe.charges.create({
-      amount,
-      currency: "USD",
-      source: token.id,
-    });
-    // Save the payment to the database
-    const payments = new Payment({
-      payment: payment,
-    });
-    await payments.save();
+    try {
+      const payment = await stripe.charges.create({
+        amount,
+        currency: "USD",
+        source: token.id,
+      });
+      // Save the payment to the database
+      const payments = new Payment({
+        payment: payment,
+      });
+      await payments.save();
 
-    res.json({
-      message: "Payment successful",
-      success: true,
-    });
-  } catch (error) {
-    console.log("Error", error);
-    res.json({
-      message: "Payment failed",
-      success: false,
-    });
+      res.json({
+        message: "Payment successful",
+        success: true,
+      });
+    } catch (error) {
+      console.log("Error", error);
+      res.json({
+        message: "Payment failed",
+        success: false,
+      });
+    }
   }
-});
+);
 
 app.listen(process.env.PORT || 4000, () => {
   console.log("Sever is listening on port 4000");
