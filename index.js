@@ -21,41 +21,52 @@ db.on("connected", () => {
 db.on("disconnected", (err, res) => {
   console.log("db disconnected", err, "###", res);
 });
+
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "https://usshape.org");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  res.setHeader("Access-Control-Allow-Credentials", true);
+  next();
+});
+
 app.get("/", (req, res) => {
   res.send("Stripe Api is working Fine");
 });
 //  ....................................End-Points...............................
-app.post(
-  "/payment",
-  cors({ origin: "https://usshape.org" }),
-  async (req, res) => {
-    let { amount, token } = req.body;
+app.post("/payment", async (req, res) => {
+  let { amount, token } = req.body;
 
-    try {
-      const payment = await stripe.charges.create({
-        amount,
-        currency: "USD",
-        source: token.id,
-      });
-      // Save the payment to the database
-      const payments = new Payment({
-        payment: payment,
-      });
-      await payments.save();
+  try {
+    const payment = await stripe.charges.create({
+      amount,
+      currency: "USD",
+      source: token.id,
+    });
+    // Save the payment to the database
+    const payments = new Payment({
+      payment: payment,
+    });
+    await payments.save();
 
-      res.json({
-        message: "Payment successful",
-        success: true,
-      });
-    } catch (error) {
-      console.log("Error", error);
-      res.json({
-        message: "Payment failed",
-        success: false,
-      });
-    }
+    res.json({
+      message: "Payment successful",
+      success: true,
+    });
+  } catch (error) {
+    console.log("Error", error);
+    res.json({
+      message: "Payment failed",
+      success: false,
+    });
   }
-);
+});
 
 app.listen(process.env.PORT || 4000, () => {
   console.log("Sever is listening on port 4000");
