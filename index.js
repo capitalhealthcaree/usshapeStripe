@@ -21,7 +21,9 @@ db.on("connected", () => {
 db.on("disconnected", (err, res) => {
   console.log("db disconnected", err, "###", res);
 });
-
+app.get("/", (req, res) => {
+  res.send("Stripe Api is working Fine");
+});
 //  ....................................End-Points...............................
 app.post(
   "/payment",
