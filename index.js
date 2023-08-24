@@ -39,7 +39,9 @@ app.use((req, res, next) => {
 app.get("/", (req, res) => {
   res.send("Stripe Api is working Fine");
 });
-//  ....................................End-Points...............................
+
+//....For Stripe.....................
+
 app.post("/payment", async (req, res) => {
   let { amount, token } = req.body;
 
@@ -68,6 +70,31 @@ app.post("/payment", async (req, res) => {
   }
 });
 
+// get stripe data by Email
+app.get("/getStripe/:email", async (req, res) => {
+  try {
+    const email = req.params.email;
+    const stripeEmail = await Payment.findOne({
+      "payment.0.billing_details.name": email,
+    });
+    if (!stripeEmail) {
+      return res
+        .status(404)
+        .json({ error: "No Payment has been made from this email" });
+    }
+    const matchedEmail = stripeEmail.payment[0].billing_details.name;
+    res.status(200).json({
+      email: matchedEmail,
+      amount: stripeEmail.payment[0].amount / 100,
+      mesasge: "Payment received successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// app listen
 app.listen(process.env.PORT || 4000, () => {
   console.log("Sever is listening on port 4000");
 });
