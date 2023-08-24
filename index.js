@@ -78,9 +78,7 @@ app.get("/getStripe/:email", async (req, res) => {
       "payment.0.billing_details.name": email,
     });
     if (!stripeEmail) {
-      return res
-        .status(404)
-        .json({ error: "No Payment has been made from this email" });
+      return res.json({ error: "No Payment has been made from this email" });
     }
     const matchedEmail = stripeEmail.payment[0].billing_details.name;
     res.status(200).json({
