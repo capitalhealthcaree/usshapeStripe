@@ -86,7 +86,7 @@ app.get("/getStripe/:email", async (req, res) => {
     res.status(200).json({
       email: matchedEmail,
       amount: stripeEmail.payment[0].amount / 100,
-      mesasge: "Payment received successfully",
+      mesasge: "Payment received successfully from this email",
     });
   } catch (error) {
     console.error(error);
