@@ -89,11 +89,11 @@ app.get("/getStripe/:email", async (req, res) => {
     const matchedEmail = stripeEmail.payment[0].billing_details.name;
     const paymentAmount = stripeEmail.payment[0].amount / 100;
 
-    if (paymentAmount !== 250) {
-      return res.status(400).json({
-        message: "Payment amount does not match the expected amount of 250$",
-      });
-    }
+    // if (paymentAmount !== 250) {
+    //   return res.status(400).json({
+    //     message: "Payment amount does not match the expected amount of 250$",
+    //   });
+    // }
 
     res.status(200).json({
       email: matchedEmail,
@@ -127,6 +127,7 @@ app.post("/reserveRotation", async (req, res) => {
     //     message: "Please pay the exact amount of 250$",
     //   });
     // }
+
     // Email not reserved, create the rotation
     const formData = await Rotation.create({
       name,
