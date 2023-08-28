@@ -1,4 +1,5 @@
 const express = require("express");
+const nodemailer = require("nodemailer");
 const app = express();
 require("dotenv").config();
 const mongoose = require("mongoose");
@@ -145,12 +146,10 @@ app.post("/reserveRotation", async (req, res) => {
         console.log(info);
       }
     });
-    res
-      .status(200)
-      .json({
-        data: formData,
-        mesasge: "Your rotation is reserved successfully",
-      });
+    res.status(200).json({
+      data: formData,
+      mesasge: "Your rotation is reserved successfully",
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
