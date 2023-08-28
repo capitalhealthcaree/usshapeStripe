@@ -101,6 +101,17 @@ app.post("/reserveRotation", async (req, res) => {
   const { name, email, termsConditions, reservation } = req.body;
 
   try {
+    // Check if the email is already in the database
+    const existingRotation = await Rotation.findOne({ email });
+
+    if (existingRotation) {
+      // Email already reserved
+      return res.status(400).json({
+        message: "This email is already reserved for a rotation",
+      });
+    }
+
+    // Email not reserved, create the rotation
     const formData = await Rotation.create({
       name,
       email,
@@ -150,7 +161,7 @@ app.post("/reserveRotation", async (req, res) => {
     });
     res.status(200).json({
       data: formData,
-      mesasge: "Your rotation is reserved successfully",
+      message: "Your rotation is reserved successfully",
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
