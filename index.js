@@ -79,7 +79,7 @@ app.get("/getStripe/:email", async (req, res) => {
     const stripeEmail = await Payment.findOne({
       "payment.0.billing_details.name": email,
     });
-    
+
     if (!stripeEmail) {
       return res.status(400).json({
         message: "No Payment has been made from this email",
@@ -105,29 +105,6 @@ app.get("/getStripe/:email", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
-// app.get("/getStripe/:email", async (req, res) => {
-//   try {
-//     const email = req.params.email;
-//     const stripeEmail = await Payment.findOne({
-//       "payment.0.billing_details.name": email,
-//     });
-//     if (!stripeEmail) {
-//       return res
-//         .status(400)
-//         .json({ message: "No Payment has been made from this email" });
-//     }
-//     const matchedEmail = stripeEmail.payment[0].billing_details.name;
-//     res.status(200).json({
-//       email: matchedEmail,
-//       amount: stripeEmail.payment[0].amount / 100,
-//       mesasge: "Payment received successfully from this email",
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: error.message });
-//   }
-// });
 
 // for reserve a rotation
 app.post("/reserveRotation", async (req, res) => {
@@ -157,7 +134,7 @@ app.post("/reserveRotation", async (req, res) => {
       termsConditions,
       reservation,
     });
-    // Send an email to the admin
+    // Send emails to both admin and candidate
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -166,32 +143,68 @@ app.post("/reserveRotation", async (req, res) => {
       },
     });
 
-    const mailOptions = {
-      from: email,
+    const mailOptionsAdmin = {
+      from: "webdevelopercapital@gmail.com",
       to: "webdevelopercapital@gmail.com",
       subject: "Externship Alert from USSHAPE",
       html: `
-		<html>
-		  <head>
-			<style>
-			  h1 {
-				color: #003062;
-			  }
-			  p {
-				font-size: 18px;
-				line-height: 1.5;
-			  }
-			</style>
-		  </head>
-		  <body>
-			<h1>Details</h1>
-			<p>Name : ${name}</p>
-			<p>Email : ${email}</p>
-      <p>Reservation : ${reservation}</p>
-		  </body>
-		</html>`,
+        <html>
+          <head>
+            <style>
+              h1 {
+                color: #003062;
+              }
+              p {
+                font-size: 18px;
+                line-height: 1.5;
+              }
+            </style>
+          </head>
+          <body>
+            <h1>Details</h1>
+            <p>Name: ${name}</p>
+            <p>Email: ${email}</p>
+            <p>Reservation: ${reservation}</p>
+          </body>
+        </html>`,
     };
-    transporter.sendMail(mailOptions, (err, info) => {
+
+    const mailOptionsCandidate = {
+      from: "webdevelopercapital@gmail.com",
+      to: email,
+      subject: "Reservation Confirmation from USSHAPE",
+      html: `
+        <html>
+          <head>
+            <style>
+              h1 {
+                color: #003062;
+              }
+              p {
+                font-size: 18px;
+                line-height: 1.5;
+              }
+            </style>
+          </head>
+          <body>
+            <h1>Reservation Confirmation</h1>
+            <p>Hello ${name},</p>
+            <p>Your rotation reservation has been successfully confirmed.</p>
+            <p>Reservation: ${reservation}</p>
+            <p>Thank you for choosing USSHAPE!</p>
+          </body>
+        </html>`,
+    };
+
+    transporter.sendMail(mailOptionsAdmin, (err, info) => {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log(info);
+      }
+    });
+
+    transporter.sendMail(mailOptionsCandidate, (err, info) => {
       if (err) {
         console.error(err);
       } else {
