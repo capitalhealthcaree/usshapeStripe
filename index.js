@@ -6,6 +6,7 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_TEST);
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const Payment = require("./model/payment");
+const Rotation = require("./model/rotation");
 
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(bodyParser.json());
@@ -89,6 +90,69 @@ app.get("/getStripe/:email", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: error.message });
+  }
+});
+
+// for reserve a rotation
+app.post("/reserveRotation", async (req, res) => {
+  const { name, email, termsConditions, reservation } = req.body;
+
+  try {
+    const formData = await Rotation.create({
+      name,
+      email,
+      termsConditions,
+      reservation,
+    });
+    // Send an email to the admin
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "webdevelopercapital@gmail.com",
+        pass: "uvgqevylpebrtvgj",
+      },
+    });
+
+    const mailOptions = {
+      from: email,
+      to: "webdevelopercapital@gmail.com",
+      subject: "Externship Alert from USSHAPE",
+      html: `
+		<html>
+		  <head>
+			<style>
+			  h1 {
+				color: #003062;
+			  }
+			  p {
+				font-size: 18px;
+				line-height: 1.5;
+			  }
+			</style>
+		  </head>
+		  <body>
+			<h1>Details</h1>
+			<p>Name : ${name}</p>
+			<p>Email : ${email}</p>
+      <h4> : ${reservation}</h4>
+		  </body>
+		</html>`,
+    };
+    transporter.sendMail(mailOptions, (err, info) => {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log(info);
+      }
+    });
+    res
+      .status(200)
+      .json({
+        data: formData,
+        mesasge: "Your rotation is reserved successfully",
+      });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
 
