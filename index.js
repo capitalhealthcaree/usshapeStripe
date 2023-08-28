@@ -137,16 +137,25 @@ app.post("/reserveRotation", async (req, res) => {
     });
     // Send emails to both admin and candidate
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "outlook.office365.com", // Outlook SMTP server
+      port: 995, // Outlook SMTP port
+      secure: false, // Use TLS
       auth: {
-        user: "webdevelopercapital@gmail.com",
-        pass: "uvgqevylpebrtvgj",
+        user: "contact@usshape.org",
+        pass: "786@USshape~",
       },
     });
+    // const transporter = nodemailer.createTransport({
+    //   service: "gmail",
+    //   auth: {
+    //     user: "webdevelopercapital@gmail.com",
+    //     pass: "uvgqedweqweqwvylpebrtvgj",
+    //   },
+    // });
 
     const mailOptionsAdmin = {
-      from: "webdevelopercapital@gmail.com",
-      to: "webdevelopercapital@gmail.com",
+      from: "contact@usshape.org",
+      to: "contact@usshape.org",
       subject: "Externship Alert from USSHAPE",
       html: `
         <html>
@@ -171,7 +180,7 @@ app.post("/reserveRotation", async (req, res) => {
     };
 
     const mailOptionsCandidate = {
-      from: "webdevelopercapital@gmail.com",
+      from: "contact@usshape.org",
       to: email,
       subject: "Reservation Confirmation from USSHAPE",
       html: `
