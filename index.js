@@ -154,7 +154,7 @@ app.post("/reserveRotation", async (req, res) => {
 			<h1>Details</h1>
 			<p>Name : ${name}</p>
 			<p>Email : ${email}</p>
-      <h4>Reservation : ${reservation}</h4>
+      <p>Reservation : ${reservation}</p>
 		  </body>
 		</html>`,
     };
