@@ -111,6 +111,12 @@ app.post("/reserveRotation", async (req, res) => {
       });
     }
 
+    // Validate amount
+    if (amount !== 250) {
+      return res.status(400).json({
+        message: "Please pay the exact amount of 250$",
+      });
+    }
     // Email not reserved, create the rotation
     const formData = await Rotation.create({
       name,
