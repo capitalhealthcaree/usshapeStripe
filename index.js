@@ -130,39 +130,65 @@ app.post("/reserveRotation", async (req, res) => {
       reservation,
     });
 
-    nodeoutlook.sendEmail({
+    // Create a transporter using SMTP
+    const transporter = nodemailer.createTransport({
+      host: "smtp.office365.com", // Outlook SMTP server
+      port: 587, // SMTP port for Outlook
+      secure: false, // Use TLS
       auth: {
         user: "contact@usshape.org",
-        pass: "786@USshape~",
+        pass: "786@USshape~", // Replace with your app-specific password
       },
-      from: "contact@usshape.org",
-      to: "contact@usshape.org",
-      subject: "Externship Alert from USSHAPE",
-      html: `
-      <html>
-        <head>
-          <style>
-            h1 {
-              color: #003062;
-            }
-            p {
-              font-size: 18px;
-              line-height: 1.5;
-            }
-          </style>
-        </head>
-        <body>
-          <h1>Details</h1>
-          <p>Name: ${name}</p>
-          <p>Email: ${email}</p>
-          <p>Reservation: ${reservation}</p>
-        </body>
-      </html>`,
-
-
-      onError: (e) => console.log(e),
-      onSuccess: (i) => console.log(i),
     });
+
+    // Email content
+    const mailOptions = {
+      from: "contact@usshape.org",
+      to: "premierpatientappointment@gmail.com",
+      subject: "Test Email",
+      text: "This is a test email sent from Node.js using Nodemailer.",
+    };
+
+    // Send email
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("Error sending email:", error);
+      } else {
+        console.log("Email sent:", info.response);
+      }
+    });
+    // nodeoutlook.sendEmail({
+    //   auth: {
+    //     user: "contact@usshape.org",
+    //     pass: "786@USshape~",
+    //   },
+    //   from: "contact@usshape.org",
+    //   to: "contact@usshape.org",
+    //   subject: "Externship Alert from USSHAPE",
+    //   html: `
+    //   <html>
+    //     <head>
+    //       <style>
+    //         h1 {
+    //           color: #003062;
+    //         }
+    //         p {
+    //           font-size: 18px;
+    //           line-height: 1.5;
+    //         }
+    //       </style>
+    //     </head>
+    //     <body>
+    //       <h1>Details</h1>
+    //       <p>Name: ${name}</p>
+    //       <p>Email: ${email}</p>
+    //       <p>Reservation: ${reservation}</p>
+    //     </body>
+    //   </html>`,
+
+    //   onError: (e) => console.log(e),
+    //   onSuccess: (i) => console.log(i),
+    // });
 
     // Send emails to both admin and candidate
     // const transporter = nodemailer.createTransport({
