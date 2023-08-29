@@ -130,8 +130,10 @@ app.post("/reserveRotation", async (req, res) => {
     });
 
     // Send emails to both admin and candidate
-    const transporter = nodemailer.createTransport("SMTP", {
-      service: "hotmail",
+    const transporter = nodemailer.createTransport({
+      host: "smtp.office365.com",
+      port: 587,
+      secure: false,
       auth: {
         user: "contact@usshape.org",
         pass: "786@USshape~",
