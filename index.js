@@ -121,13 +121,6 @@ app.post("/reserveRotation", async (req, res) => {
       });
     }
 
-    // Validate amount
-    // if (amount !== 250) {
-    //   return res.status(400).json({
-    //     message: "Please pay the exact amount of 250$",
-    //   });
-    // }
-
     // Email not reserved, create the rotation
     const formData = await Rotation.create({
       name,
@@ -135,23 +128,15 @@ app.post("/reserveRotation", async (req, res) => {
       termsConditions,
       reservation,
     });
+
     // Send emails to both admin and candidate
-    const transporter = nodemailer.createTransport({
-      host: "outlook.office365.com", // Outlook SMTP server
-      port: 995, // Outlook SMTP port
-      secure: false, // Use TLS
+    const transporter = nodemailer.createTransport("SMTP", {
+      service: "hotmail",
       auth: {
         user: "contact@usshape.org",
         pass: "786@USshape~",
       },
     });
-    // const transporter = nodemailer.createTransport({
-    //   service: "gmail",
-    //   auth: {
-    //     user: "webdevelopercapital@gmail.com",
-    //     pass: "uvgqedweqweqwvylpebrtvgj",
-    //   },
-    // });
 
     const mailOptionsAdmin = {
       from: "contact@usshape.org",
