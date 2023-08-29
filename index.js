@@ -1,5 +1,6 @@
 const express = require("express");
 const nodemailer = require("nodemailer");
+var nodeoutlook = require("nodejs-nodemailer-outlook");
 const app = express();
 require("dotenv").config();
 const mongoose = require("mongoose");
@@ -129,85 +130,120 @@ app.post("/reserveRotation", async (req, res) => {
       reservation,
     });
 
-    // Send emails to both admin and candidate
-    const transporter = nodemailer.createTransport({
-      host: "smtp.office365.com",
-      port: 587,
-      secure: false,
+    nodeoutlook.sendEmail({
       auth: {
         user: "contact@usshape.org",
         pass: "786@USshape~",
       },
-    });
-
-    const mailOptionsAdmin = {
       from: "contact@usshape.org",
       to: "contact@usshape.org",
       subject: "Externship Alert from USSHAPE",
       html: `
-        <html>
-          <head>
-            <style>
-              h1 {
-                color: #003062;
-              }
-              p {
-                font-size: 18px;
-                line-height: 1.5;
-              }
-            </style>
-          </head>
-          <body>
-            <h1>Details</h1>
-            <p>Name: ${name}</p>
-            <p>Email: ${email}</p>
-            <p>Reservation: ${reservation}</p>
-          </body>
-        </html>`,
-    };
+      <html>
+        <head>
+          <style>
+            h1 {
+              color: #003062;
+            }
+            p {
+              font-size: 18px;
+              line-height: 1.5;
+            }
+          </style>
+        </head>
+        <body>
+          <h1>Details</h1>
+          <p>Name: ${name}</p>
+          <p>Email: ${email}</p>
+          <p>Reservation: ${reservation}</p>
+        </body>
+      </html>`,
 
-    const mailOptionsCandidate = {
-      from: "contact@usshape.org",
-      to: email,
-      subject: "Reservation Confirmation from USSHAPE",
-      html: `
-        <html>
-          <head>
-            <style>
-              h1 {
-                color: #003062;
-              }
-              p {
-                font-size: 18px;
-                line-height: 1.5;
-              }
-            </style>
-          </head>
-          <body>
-            <h1>Reservation Confirmation</h1>
-            <p>Hello ${name},</p>
-            <p>Your rotation reservation has been successfully confirmed.</p>
-            <p>Reservation: ${reservation}</p>
-            <p>Thank you for choosing USSHAPE!</p>
-          </body>
-        </html>`,
-    };
 
-    transporter.sendMail(mailOptionsAdmin, (err, info) => {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log(info);
-      }
+      onError: (e) => console.log(e),
+      onSuccess: (i) => console.log(i),
     });
 
-    transporter.sendMail(mailOptionsCandidate, (err, info) => {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log(info);
-      }
-    });
+    // Send emails to both admin and candidate
+    // const transporter = nodemailer.createTransport({
+    //   host: "smtp.office365.com",
+    //   port: 587,
+    //   secure: false,
+    //   auth: {
+    //     user: "contact@usshape.org",
+    //     pass: "786@USshape~",
+    //   },
+    // });
+
+    // const mailOptionsAdmin = {
+    //   from: "contact@usshape.org",
+    //   to: "contact@usshape.org",
+    //   subject: "Externship Alert from USSHAPE",
+    //   html: `
+    //     <html>
+    //       <head>
+    //         <style>
+    //           h1 {
+    //             color: #003062;
+    //           }
+    //           p {
+    //             font-size: 18px;
+    //             line-height: 1.5;
+    //           }
+    //         </style>
+    //       </head>
+    //       <body>
+    //         <h1>Details</h1>
+    //         <p>Name: ${name}</p>
+    //         <p>Email: ${email}</p>
+    //         <p>Reservation: ${reservation}</p>
+    //       </body>
+    //     </html>`,
+    // };
+
+    // const mailOptionsCandidate = {
+    //   from: "contact@usshape.org",
+    //   to: email,
+    //   subject: "Reservation Confirmation from USSHAPE",
+    //   html: `
+    //     <html>
+    //       <head>
+    //         <style>
+    //           h1 {
+    //             color: #003062;
+    //           }
+    //           p {
+    //             font-size: 18px;
+    //             line-height: 1.5;
+    //           }
+    //         </style>
+    //       </head>
+    //       <body>
+    //         <h1>Reservation Confirmation</h1>
+    //         <p>Hello ${name},</p>
+    //         <p>Your rotation reservation has been successfully confirmed.</p>
+    //         <p>Reservation: ${reservation}</p>
+    //         <p>Thank you for choosing USSHAPE!</p>
+    //       </body>
+    //     </html>`,
+    // };
+
+    // transporter.sendMail(mailOptionsAdmin, (err, info) => {
+    //   if (err) {
+    //     console.error(err);
+    //   } else {
+    //     console.log(info);
+    //   }
+    // });
+
+    // transporter.sendMail(mailOptionsCandidate, (err, info) => {
+    //   if (err) {
+    //     console.error(err);
+    //   } else {
+    //     console.log(info);
+    //   }
+    // });
+
     res.status(200).json({
       data: formData,
       message: "Your rotation is reserved successfully",
