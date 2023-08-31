@@ -129,7 +129,7 @@ app.post("/reserveRotation", async (req, res) => {
       termsConditions,
       reservation,
     });
-
+    
     // Send emails to both admin and candidate
     const transporter = nodemailer.createTransport({
       host: "smtp.office365.com",
@@ -194,21 +194,25 @@ app.post("/reserveRotation", async (req, res) => {
         </html>`,
     };
 
-    transporter.sendMail(mailOptionsAdmin, (err, info) => {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log(info);
-      }
-    });
+    try {
+      await transporter.sendMail(mailOptionsAdmin);
+      console.log("Admin confirmation email sent successfully");
+    } catch (err) {
+      console.error("Error sending admin confirmation email:", err);
+      return res.status(500).json({
+        message: "Error sending admin confirmation email",
+      });
+    }
 
-    transporter.sendMail(mailOptionsCandidate, (err, info) => {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log(info);
-      }
-    });
+    try {
+      await transporter.sendMail(mailOptionsCandidate);
+      console.log("User confirmation email sent successfully");
+    } catch (err) {
+      console.error("Error sending admin confirmation email:", err);
+      return res.status(500).json({
+        message: "Error sending admin confirmation email",
+      });
+    }
 
     res.status(200).json({
       data: formData,
