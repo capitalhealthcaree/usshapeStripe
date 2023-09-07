@@ -6,6 +6,7 @@ const rotationSchema = mongoose.Schema(
     email: { type: String },
     termsConditions: { type: Boolean },
     reservation: { type: String },
+    url: { type: String },
   },
   { timestamps: true }
 );

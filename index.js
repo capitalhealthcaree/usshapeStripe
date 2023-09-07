@@ -122,12 +122,26 @@ app.post("/reserveRotation", async (req, res) => {
       });
     }
 
+    // Generate a unique code with sequential numbers
+    function generateUniqueCode(name) {
+      // Replace spaces with hyphens and convert to lowercase
+      const formattedName = name.replace(/\s/g, "-").toLowerCase();
+
+      // Generate a random number between 10000 and 99999 (5-digit range)
+      const random5DigitNumber = Math.floor(Math.random() * 90000) + 10000;
+
+      return `${formattedName}-${random5DigitNumber}`;
+    }
+
+    const shareUrl = generateUniqueCode(name);
+
     // Email not reserved, create the rotation
     const formData = await Rotation.create({
       name,
       email,
       termsConditions,
       reservation,
+      url: shareUrl,
     });
 
     // Send emails to both admin and candidate
@@ -140,6 +154,9 @@ app.post("/reserveRotation", async (req, res) => {
         pass: "786@USshape~",
       },
     });
+
+    const mainUrl = "https://usshape.org/share-externship-form/";
+    const completeShareUrl = `${mainUrl}${shareUrl}`;
 
     const mailOptionsAdmin = {
       from: "contact@usshape.org",
@@ -160,9 +177,10 @@ app.post("/reserveRotation", async (req, res) => {
           </head>
           <body>
             <h1>Details</h1>
+            <a href=${completeShareUrl}>Shareable URL</a>
             <p>Name: ${name}</p>
             <p>Email: ${email}</p>
-            <p>Reservation: ${reservation}</p>
+            <p>Reserved Rotation: ${reservation}</p>
           </body>
         </html>`,
     };
@@ -252,6 +270,22 @@ app.get("/personsrotation/getAll", async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ err: "An error occurred", error });
+  }
+});
+
+// get Application Form By Url
+app.get("/personsrotation/getAll", async (req, res) => {
+  try {
+    const slug = req.query.url;
+    const form = await ApplicationForm.findOne({ url: slug });
+    if (!form) {
+      return res.status(404).json({ error: "Form not found" });
+    }
+
+    res.status(200).json({ data: form });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
   }
 });
 
