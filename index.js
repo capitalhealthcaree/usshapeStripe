@@ -277,7 +277,7 @@ app.get("/personsrotation/getAll", async (req, res) => {
 app.get("/personsrotation/getByName", async (req, res) => {
   try {
     const slug = req.query.url;
-    const form = await ApplicationForm.findOne({ url: slug });
+    const form = await Rotation.findOne({ url: slug });
     if (!form) {
       return res.status(404).json({ error: "Form not found" });
     }
