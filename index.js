@@ -129,7 +129,7 @@ app.post("/reserveRotation", async (req, res) => {
       termsConditions,
       reservation,
     });
-    
+
     // Send emails to both admin and candidate
     const transporter = nodemailer.createTransport({
       host: "smtp.office365.com",
@@ -232,6 +232,21 @@ app.get("/rotation/getAll", async (req, res) => {
       // Extract email addresses from the data and ignore other fields
       const reservationList = data.map((item) => item.reservation);
       res.status(200).json({ reservationList });
+    } else {
+      res.status(500).json({ err: "Encountered an error while fetching data" });
+    }
+  } catch (error) {
+    res.status(500).json({ err: "An error occurred", error });
+  }
+});
+
+// get rotations' person data
+app.get("/personsrotation/getAll", async (req, res) => {
+  try {
+    const data = await Rotation.find();
+
+    if (data) {
+      res.status(200).json({ data: data });
     } else {
       res.status(500).json({ err: "Encountered an error while fetching data" });
     }
