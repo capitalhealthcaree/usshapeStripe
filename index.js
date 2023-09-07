@@ -273,8 +273,8 @@ app.get("/personsrotation/getAll", async (req, res) => {
   }
 });
 
-// get Application Form By Url
-app.get("/personsrotation/getAll", async (req, res) => {
+// get externship Application Form By Url
+app.get("/personsrotation/getByName", async (req, res) => {
   try {
     const slug = req.query.url;
     const form = await ApplicationForm.findOne({ url: slug });
